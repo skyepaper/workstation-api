@@ -26,7 +26,7 @@ const io = new Server(server, {
   },
   'force new connection': true 
 });
-server.listen(3002);
+
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
