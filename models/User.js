@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 
 const Schema=mongoose.Schema;
 
-const USerSchema=new Schema({
+const UserSchema=new Schema({
     timestamp:{
         type:String,
         default:function(){return new Intl.DateTimeFormat('en-us',{
