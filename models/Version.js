@@ -12,10 +12,6 @@ const VersionSchema = new Schema({
         type:String,
         default:''
     },
-    description:{
-        type:String,
-        default:''
-    },
     code:{
         type:String,
         default:''
