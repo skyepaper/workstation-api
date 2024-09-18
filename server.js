@@ -11,14 +11,13 @@ app.use(cors());
 
 server = require('http').createServer(app);
 
-mongoose.connect('--hidden--', {
+mongoose.connect('mongodb+srv://borismirevbm:2YacEBc3qgz4OiLJ@aquarium.6ud9dig.mongodb.net/workstation?retryWrites=true&w=majority', {
     useNewUrlParser:true,
     useUnifiedTopology:true
 }).then(()=>console.log('Connected to DB'))
   .catch(console.error);
 
-  const Record = require('./models/Record');
-  const Version = require('./models/Version');
+  const Project = require('./models/Project');
 
   const io = new Server(server, {
     cors: {
@@ -39,15 +38,9 @@ mongoose.connect('--hidden--', {
   });
   
     
-    const RecordEventEmitter = Record.watch();
-    RecordEventEmitter.on('change', change => {
-      let text='record';
-        socket.emit('message',{text});
-    });
-
-    const VersionEventEmitter = Version.watch();
-    VersionEventEmitter.on('change', change => {
-      let text='version';
+    const ProjectEventEmitter = Project.watch();
+    ProjectEventEmitter.on('change', change => {
+      let text='project';
         socket.emit('message',{text});
     });
     
@@ -56,63 +49,38 @@ mongoose.connect('--hidden--', {
 
 
 
-app.get('/records', cors(), async(req,res)=>{  
+app.get('/projects', cors(), async(req,res)=>{  
 
-    const records = await Record.find();
-    res.json(records);
+    const projects = await Project.find();
+    res.json(projects);
 });
-app.post('/record/new', async (req,res)=>{
 
-    const record = new Record({
+app.post('/project/new', async (req,res)=>{
+
+    const project = new Project({
      
-      number: req.body.number
+      name: req.body.name,
+      pass: req.body.pass,
+      type: req.body.type
+
     });
-    record.save();
-    res.json(record);
+    project.save();
+    res.json(project);
 });
-app.delete('/record/delete/:id', async (req,res)=>{
-  const result=await Record.findByIdAndDelete(req.params.id);
+
+app.delete('/project/delete/:id', async (req,res)=>{
+  const result=await Project.findByIdAndDelete(req.params.id);
   res.json(result);
 })
-app.put('/record/save/:id', async (req,res)=>{
 
-  const record=await Record.findByIdAndUpdate(req.params.id);
-  if(record) {
-    record.description= req.body.description;
-    record.code= req.body.code;
+app.put('/project/save/:id', async (req,res)=>{
+
+  const project=await Project.findByIdAndUpdate(req.params.id);
+  if(project) {
+      project.name= req.body.name
+      project.pass= req.body.pass
   }
   
-    record.save();
-    res.json(record);
-});
-
-
-
-app.get('/versions', cors(), async(req,res)=>{  
-
-  const versions = await Version.find();
-  res.json(versions);
-});
-app.post('/version/new', async (req,res)=>{
-
-  const version = new Version({
-    version: req.body.version,
-    number: req.body.number
-  });
-  version.save();
-  res.json(version);
-});
-app.delete('/version/delete/:id', async (req,res)=>{
-const result=await Version.findByIdAndDelete(req.params.id);
-res.json(result);
-})
-app.put('/version/save/:id', async (req,res)=>{
-
-const version=await Version.findByIdAndUpdate(req.params.id);
-if(version) {
-  version.code= req.body.code;
-}
-
-  version.save();
-  res.json(version);
+    project.save();
+    res.json(project);
 });
